@@ -1,3 +1,7 @@
+#%% [markdown]
+## Monotonicity
+# A non increasing or non decreasing function is said to be monotonic i.e. when $\mathbf{x}<\mathbf{y}$ and $\mathbf{f(x)}<\mathbf{f(y)}$ (monotonically increasing) or when $\mathbf{x}<\mathbf{y}$ and $\mathbf{f(x)}>\mathbf{f(y)}$ (monotonically decreasing)
+
 #%%
 import warnings
 import pandas as pd
@@ -12,12 +16,12 @@ from sklearn.experimental import (
 import lightgbm as lgb
 from typing import List
 
-#%%
+# %%
 warnings.filterwarnings("ignore", category=FutureWarning)
 # back to the default behavior
 # warnings.filterwarnings("default", category=FutureWarning)
 
-#%%
+# %%
 def target_df(x1: List, x2: List):
     """creates target using mathematically generated data
     (xgboost documentation)
@@ -52,7 +56,7 @@ def plot_pdps(pdps: List, dfs_list: List, target: List):
         ax.plot(p["_x_"], p["_yhat_"], color="k")
 
 
-#%%
+# %%
 # Generating random 500 points between 0 and 1
 x1 = [np.random.random() for i in range(500)]
 x2 = [np.random.random() for i in range(500)]
@@ -142,5 +146,13 @@ exp_lgb_const = dx.Explainer(lgbmod_const, pd_train, target)
 exp_lgb_const_p = exp_lgb_const.model_profile()
 pdps_lgb_const = check_trend(exp_lgb_const_p)
 plot_pdps(pdps_lgb_const, [x1, x2], target)
+
+# %% [markdown]
+
+# There are various other models/packages which allow us to enforce monotonicity, for e.g.
+# * Splines [scipy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html), [stackoverflow answer based on R](https://stats.stackexchange.com/questions/197509/how-to-smooth-data-and-force-monotonicity)
+# * Hist Gradient Boosting [scikit](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html)
+# * Catboost [(search for **monotone_constraints** upon clicking this)](https://catboost.ai/docs/concepts/python-reference_parameters-list.html)
+# * TensorFlow Lattice [(TFL)](https://www.tensorflow.org/lattice/overview)
 
 # %%
