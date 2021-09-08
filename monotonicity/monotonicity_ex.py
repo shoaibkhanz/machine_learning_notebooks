@@ -4,17 +4,18 @@
 
 #%%
 import warnings
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import xgboost as xgb
+from typing import List
+
 import catboost as cb
 import dalex as dx
-from sklearn.experimental import (
-    enable_hist_gradient_boosting,
-)  # this is still experimental
 import lightgbm as lgb
-from typing import List
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import xgboost as xgb
+from sklearn.experimental import (  # this is still experimental
+    enable_hist_gradient_boosting,
+)
 
 # %%
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -26,25 +27,20 @@ def target_df(x1: List, x2: List):
     """creates target using mathematically generated data
     (xgboost documentation)
     """
-    target = []
-    for x1, x2 in zip(x1, x2):
-        target.append(
-            (
-                (5 * x1)
-                + np.sin(10 * np.pi * x1)
-                - (5 * x2)
-                - np.cos(10 * np.pi * x2)
-                + np.random.normal(0, 0.01)
-            )
-        )
-    return target
+    return [
+        (5 * x1)
+        + np.sin(10 * np.pi * x1)
+        - (5 * x2)
+        - np.cos(10 * np.pi * x2)
+        + np.random.normal(0, 0.01)
+        for x1, x2 in zip(x1, x2)
+    ]
 
 
 def check_trend(model_profile: dx.Explainer.model_profile):
     """extract pdp values from dalex explainer object"""
     pdps = pd.DataFrame(model_profile.result)
-    pdp_feats = [pdps[pdps["_vname_"] == i] for i in pdps["_vname_"].unique()]
-    return pdp_feats
+    return [pdps[pdps["_vname_"] == i] for i in pdps["_vname_"].unique()]
 
 
 def plot_pdps(pdps: List, dfs_list: List, target: List):
@@ -79,9 +75,13 @@ ax2.set_xlabel("x2")
 pd_train = pd.DataFrame(pd.concat([pd.Series(x1), pd.Series(x2)], axis=1))
 dtrain = xgb.DMatrix(pd_train, label=target)
 
-params = {"max_depth": 2, "eta": 1, "objective": "reg:squarederror"}
-params["nthread"] = 4
-params["eval_metric"] = "rmse"
+params = {
+    "max_depth": 2,
+    "eta": 1,
+    "objective": "reg:squarederror",
+    "nthread": 4,
+    "eval_metric": "rmse",
+}
 
 #%%
 
@@ -154,5 +154,7 @@ plot_pdps(pdps_lgb_const, [x1, x2], target)
 # * Hist Gradient Boosting [scikit](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html)
 # * Catboost [(search for **monotone_constraints** upon clicking this)](https://catboost.ai/docs/concepts/python-reference_parameters-list.html)
 # * TensorFlow Lattice [(TFL)](https://www.tensorflow.org/lattice/overview)
+
+# %%
 
 # %%
