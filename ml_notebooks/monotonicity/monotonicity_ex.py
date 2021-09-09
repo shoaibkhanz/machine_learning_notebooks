@@ -2,6 +2,8 @@
 ## Monotonicity
 # A non increasing or non decreasing function is said to be monotonic i.e. when $\mathbf{x}<\mathbf{y}$ and $\mathbf{f(x)}<\mathbf{f(y)}$ (monotonically increasing) or when $\mathbf{x}<\mathbf{y}$ and $\mathbf{f(x)}>\mathbf{f(y)}$ (monotonically decreasing)
 
+# ![Monotonicity](monotonicity.png)
+
 #%%
 import warnings
 from typing import List
